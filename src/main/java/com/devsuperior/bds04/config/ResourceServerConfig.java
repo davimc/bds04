@@ -23,8 +23,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     //TODO alterar caminhos
     private static final String[] PUBLIC = {"/oauth/token", "/h2-console/**"};
-    private static final String[] OPERATOR_OR_ADMIN = {"/cities/**", "/events/**"};
-    private static final String[] ADMIN = {"/users/**"};
+    private static final String[] ALL_USERS = {"/cities/**", "/events/**"};
+
+    private static final String[] CLIENT_OR_ADMIN = {"/events/**"};
+    private static final String[] ONLY_ADMIN = {"/users/**"};
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
@@ -39,10 +41,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers(PUBLIC).permitAll()
-                .antMatchers(HttpMethod.GET, OPERATOR_OR_ADMIN).permitAll()
-                .antMatchers(OPERATOR_OR_ADMIN).hasAnyRole("OPERATOR","ADMIN")
-                .antMatchers(OPERATOR_OR_ADMIN).hasAnyRole("ADMIN")
-                .antMatchers(ADMIN).hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.GET, ALL_USERS).permitAll()
+                .antMatchers(ALL_USERS).hasAnyRole("OPERATOR","ADMIN")
+                .antMatchers(ALL_USERS).hasAnyRole("ADMIN")
+                .antMatchers(CLIENT_OR_ADMIN).hasAnyRole("CLIENT")
+                .antMatchers(ONLY_ADMIN).hasAnyRole("ADMIN")
                 .anyRequest().authenticated();
     }
 }
